@@ -77,8 +77,8 @@ public class UserController {
      */
     @GetMapping("/current")
     @Operation(summary = "获取当前登录用户")
-    public BaseResponse<UserVO> getLoginUser(HttpServletRequest request) {
-        UserVO userVO = userService.getLoginUser(request);
+    public BaseResponse<UserVO> getLoginUser() {
+        UserVO userVO = userService.getLoginUser();
         return BaseResponse.success(userVO);
     }
 

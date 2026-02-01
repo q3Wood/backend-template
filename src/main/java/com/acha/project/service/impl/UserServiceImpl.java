@@ -1,5 +1,6 @@
 package com.acha.project.service.impl;
 
+import com.acha.project.common.UserContext;
 import com.acha.project.mapper.UserMapper;
 import com.acha.project.model.entity.User;
 import com.acha.project.model.vo.user.UserVO;
@@ -104,12 +105,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public UserVO getLoginUser(jakarta.servlet.http.HttpServletRequest request) {
+    public UserVO getLoginUser() {
         // 1. 从 Session 中获取用户
         // "USER_LOGIN_STATE" 要和之前登录时设置的 key 保持完全一致
-        Object userObj = request.getSession().getAttribute("USER_LOGIN_STATE");
-        User currentUser = (User) userObj;
-
+        //Object userObj = request.getSession().getAttribute("USER_LOGIN_STATE");
+        User currentUser = UserContext.get();
         // 2. 检查是否登录
         if (currentUser == null || currentUser.getId() == null) {
             throw new RuntimeException("未登录");

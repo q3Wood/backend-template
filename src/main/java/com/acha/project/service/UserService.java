@@ -34,7 +34,7 @@ public interface UserService extends IService<User> {
      * @param request 请求对象
      * @return 脱敏后的用户信息
      */
-    UserVO getLoginUser(jakarta.servlet.http.HttpServletRequest request);
+    UserVO getLoginUser();
 
     /**
      * 用户注销
