@@ -3,6 +3,7 @@ package com.acha.project.interceptor;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.acha.project.common.UserContext;
+import com.acha.project.config.SecurityProperties;
 import com.acha.project.model.entity.User;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,6 +23,9 @@ public class LoginInterceptor implements HandlerInterceptor {
     @Resource
     private StringRedisTemplate stringRedisTemplate;
 
+    @Resource
+    private SecurityProperties securityProperties;
+
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         // 1. 从 Header 获取 Token
@@ -32,7 +36,13 @@ public class LoginInterceptor implements HandlerInterceptor {
             response.setStatus(401);
             return false;
         }
+        if (StrUtil.isBlank(token) || !token.startsWith("Bearer ")) {
+            System.out.println(token + "\n🔴 [拦截器] Token 格式错误或为空，拦截！");
+            response.setStatus(401);
+            return false;
+        }
 
+        token = token.substring(7); // 去掉 "Bearer "
         // 3. 去 Redis 查询 Token 是否存在
         // 这里的 key 必须和 Service 里存的时候保持一致 ("login:token:" + token)
         String redisKey = "login:token:" + token;
@@ -52,7 +62,8 @@ public class LoginInterceptor implements HandlerInterceptor {
 
         // 7. 【重要】自动续期
         // 用户既然在操作，就说明他是活跃的，把他登录有效期再延长 1 天
-        stringRedisTemplate.expire(redisKey, 1, TimeUnit.DAYS);
+        Integer ttl = securityProperties.getTokenTtlHours();
+        stringRedisTemplate.expire(redisKey, ttl, TimeUnit.HOURS);
 
         return true; // 放行
     }

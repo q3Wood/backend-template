@@ -2,6 +2,7 @@ package com.acha.project.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.crypto.digest.BCrypt;
 import cn.hutool.crypto.digest.DigestUtil;
 import cn.hutool.json.JSONUtil;
 import cn.hutool.jwt.JWTUtil;
@@ -66,7 +67,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         // 3. 🔐 密码加密 (Hutool MD5)
         // 最终存进数据库的是：MD5(盐 + 原密码)
         String salt = securityProperties.getSalt();
-        String encryptPassword = DigestUtil.md5Hex(salt + userPassword);
+        String encryptPassword = BCrypt.hashpw(userPassword);//DigestUtil.md5Hex(salt + userPassword);
 
         // 4. 插入数据
         User user = new User();
@@ -104,9 +105,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
         // 3. 🔐 校验密码
         // 把用户输入的密码同样加密一次，跟数据库里的密文比对
-        String salt = securityProperties.getSalt();
-        String inputEncrypt = DigestUtil.md5Hex(salt + userPassword);
-        if (!inputEncrypt.equals(user.getUserPassword())) {
+
+        if (!BCrypt.checkpw(userPassword, user.getUserPassword())) {
             throw new RuntimeException("用户不存在或密码错误");
         }
 
