@@ -31,7 +31,6 @@ public class UserController {
     // 关键点：@Valid 会自动根据 DTO 里的注解进行校验
     // 如果校验不通过，Spring 会自动抛出异常
     public BaseResponse<Long> userRegister(@RequestBody @Valid UserRegisterRequestDTO request) {
-
         // 1. 调用 Service 层逻辑
         long newUserId = userService.userRegister(
                 request.getUserAccount(),
@@ -72,7 +71,6 @@ public class UserController {
     /**
      * 获取当前登录用户
      *
-     * @param request 请求上下文
      * @return 这里的 UserVO 是从数据库查出来的最新版
      */
     @GetMapping("/current")

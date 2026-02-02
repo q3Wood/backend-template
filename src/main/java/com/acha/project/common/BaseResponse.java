@@ -22,8 +22,14 @@ public class BaseResponse<T> implements Serializable {
 
     // 成功的静态方法，方便调用
     public static <T> BaseResponse<T> success(T data) {
-        return new BaseResponse<>(0, data, "ok");
+        return new BaseResponse<>(0, data, "操作成功");
     }
+
+    // 成功的静态方法，带自定义消息
+    public static <T> BaseResponse<T> success(T data, String message) {
+        return new BaseResponse<>(0, data, message);
+    }
+
 
     // 失败的静态方法
     public static <T> BaseResponse<T> error(int code, String message) {

@@ -14,6 +14,12 @@ spring:
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      database: 0
+
 
 # 3. Swagger ????
 springdoc:
@@ -29,3 +35,12 @@ mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
     map-underscore-to-camel-case: true
+
+acha:
+  security:
+    # ??????????????????? UUID ??
+    salt: "acha_complex_salt_2026!@#"
+    # JWT ????????
+    jwt-key: "my_super_secret_jwt_key_for_acha_project"
+    # Token ???? (??)????????
+    token-ttl-hours: 24

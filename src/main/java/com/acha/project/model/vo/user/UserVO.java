@@ -24,5 +24,7 @@ public class UserVO implements Serializable {
 
     private Date createTime;
 
+    private String token;
+
     // 注意：这里没有 password 和 isDelete 字段！
 }
