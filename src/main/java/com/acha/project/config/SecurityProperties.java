@@ -12,12 +12,6 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "acha.security")
 @Data // 需要 Lombok 生成 Getter/Setter，否则读不到值
 public class SecurityProperties {
-
-    /**
-     * 密码盐值
-     */
-    private String salt;
-
     /**
      * JWT 秘钥
      */

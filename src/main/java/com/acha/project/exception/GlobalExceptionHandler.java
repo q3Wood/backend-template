@@ -14,11 +14,27 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 public class GlobalExceptionHandler {
 
-    // 1. 捕获我们自己抛出的 RuntimeException (比如：账号已存在)
+    // 0. 捕获业务异常 (自定义异常)
+    @ExceptionHandler(BusinessException.class)
+    public BaseResponse<?> businessExceptionHandler(BusinessException e) {
+        log.error("businessException: " + e.getMessage(), e);
+        return BaseResponse.error(e.getCode(), e.getMessage());
+    }
+
+    // 1. 捕获 RuntimeException
     @ExceptionHandler(RuntimeException.class)
     public BaseResponse<?> runtimeExceptionHandler(RuntimeException e) {
         log.error("runtimeException", e); // 打印错误日志到控制台
-        return BaseResponse.error(500, e.getMessage());
+        String message = e.getMessage();
+        // 如果当前异常信息为空，尝试获取 Cause 的信息，或者给默认值
+        if (message == null || message.trim().isEmpty()) {
+            if (e.getCause() != null) {
+                message = e.getCause().getMessage();
+            } else {
+                message = "系统运行时异常";
+            }
+        }
+        return BaseResponse.error(500, message);
     }
 
     // 2. 捕获 Spring Validation 参数校验异常 (比如：密码太短)

@@ -3,6 +3,7 @@ package com.acha.project.controller;
 import com.acha.project.common.BaseResponse;
 import com.acha.project.model.dto.user.UserLoginRequestDTO;
 import com.acha.project.model.dto.user.UserRegisterRequestDTO;
+import com.acha.project.model.dto.user.UserUpdatePasswordRequestDTO;
 import com.acha.project.model.vo.user.UserVO;
 import com.acha.project.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -39,7 +40,7 @@ public class UserController {
         );
 
         // 2. 返回统一的响应格式
-        return BaseResponse.success(newUserId);
+        return BaseResponse.success(newUserId, "注册成功");
     }
 
     /**
@@ -51,21 +52,16 @@ public class UserController {
      */
     @PostMapping("/login")
     @Operation(summary = "用户登录")
-    public BaseResponse<UserVO> userLogin(@RequestBody @Valid UserLoginRequestDTO request, HttpServletRequest httpServletRequest) {
-
-        // 1. 检查参数 (Controller 层只做非空检查，Service 层做业务检查)
-        if (request == null) {
-            throw new RuntimeException("请求参数为空");
-        }
+    public BaseResponse<UserVO> userLogin(@RequestBody @Valid UserLoginRequestDTO request) {
 
         String userAccount = request.getUserAccount();
         String userPassword = request.getUserPassword();
 
         // 2. 调用 Service
-        UserVO userVO = userService.userLogin(userAccount, userPassword, httpServletRequest);
+        UserVO userVO = userService.userLogin(userAccount, userPassword);
 
         // 3. 返回成功
-        return BaseResponse.success(userVO);
+        return BaseResponse.success(userVO, "登录成功");
     }
 
     /**
@@ -77,7 +73,7 @@ public class UserController {
     @Operation(summary = "获取当前登录用户")
     public BaseResponse<UserVO> getLoginUser() {
         UserVO userVO = userService.getLoginUser();
-        return BaseResponse.success(userVO);
+        return BaseResponse.success(userVO, "获取当前登录用户成功");
     }
 
     /**
@@ -89,11 +85,20 @@ public class UserController {
     @PostMapping("/logout")
     @Operation(summary = "用户注销")
     public BaseResponse<Boolean> userLogout(HttpServletRequest request) {
-        if (request == null) {
-            throw new RuntimeException("请求参数为空");
-        }
-        boolean result = userService.userLogout(request);
-        return BaseResponse.success(result);
+        String token = request.getHeader("Authorization");
+        boolean result = userService.userLogout(token);
+        return BaseResponse.success(result, "注销成功");
+    }
+
+    @PostMapping("/update/password")
+    @Operation(summary = "修改密码")
+    public BaseResponse<Boolean> updatePassword(@RequestBody @Valid UserUpdatePasswordRequestDTO request) {
+        boolean result = userService.updatePassword(
+                request.getOldPassword(),
+                request.getNewPassword(),
+                request.getCheckPassword()
+        );
+        return BaseResponse.success(result, "修改密码成功");
     }
 
 

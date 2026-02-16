@@ -24,10 +24,9 @@ public interface UserService extends IService<User> {
      *
      * @param userAccount  账号
      * @param userPassword 密码
-     * @param request      请求对象 (用来存 Session)
      * @return 脱敏后的用户信息
      */
-    UserVO userLogin(String userAccount, String userPassword, jakarta.servlet.http.HttpServletRequest request);
+    UserVO userLogin(String userAccount, String userPassword);
 
     /**
      * 获取当前登录用户
@@ -38,9 +37,19 @@ public interface UserService extends IService<User> {
 
     /**
      * 用户注销
-     * @param request 请求对象
+     * @param token Authorization header
      * @return 是否成功
      */
-    boolean userLogout(jakarta.servlet.http.HttpServletRequest request);
+    boolean userLogout(String token);
+
+    /**
+     * 修改密码
+     *
+     * @param oldPassword   旧密码
+     * @param newPassword   新密码
+     * @param checkPassword 确认新密码
+     * @return 是否成功
+     */
+    boolean updatePassword(String oldPassword, String newPassword, String checkPassword);
 
 }

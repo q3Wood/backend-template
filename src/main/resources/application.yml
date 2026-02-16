@@ -1,16 +1,19 @@
 spring:
+  output:
+    ansi:
+      enabled: ALWAYS
   application:
     name: backend-template
 
-  # 1. ??????? (???)
+  # 1. 数据源配置 (MySQL)
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    # ??????? url ?? backend ?????????????
-    url: jdbc:mysql://localhost:3306/backend?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+    # 数据库 url，指向 backend 数据库
+    url: jdbc:mysql://localhost:3306/backend?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
     username: root
-    password: 123456  # ? ???????????? MySQL ????
+    password: 123456 # 请修改为你的 MySQL 密码
 
-  # 2. ?????????? 8 ????
+  # 2. JSON 处理配置 (Jackson)
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
@@ -20,27 +23,30 @@ spring:
       port: 6379
       database: 0
 
+  # 3. Swagger 文档配置 (Knife4j)
+  springdoc:
+    api-docs:
+      enabled: true
+    swagger-ui:
+      enabled: true
+    # 扫描包路径
+    packages-to-scan: com.acha.project.controller
 
-# 3. Swagger ????
-springdoc:
-  api-docs:
-    enabled: true
-  swagger-ui:
-    enabled: true
-  # ? ??????????????
-  packages-to-scan: com.acha.project.controller
-
-# 4. MyBatis Plus ?? (?? SQL ??)
 mybatis-plus:
+  mapper-locations: classpath:mapper/*.xml
   configuration:
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
     map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl # 开启 SQL 日志打印
+  global-config:
+    db-config:
+      logic-delete-field: isDelete # 全局逻辑删除字段
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+    banner: false
 
 acha:
   security:
-    # ??????????????????? UUID ??
-    salt: "acha_complex_salt_2026!@#"
-    # JWT ????????
-    jwt-key: "my_super_secret_jwt_key_for_acha_project"
-    # Token ???? (??)????????
+    jwt-key: acha-backend-template-secret-key # 修改为你自己的密钥
     token-ttl-hours: 24
+    salt: "acha_complex_salt_2026!@#"
+    #jwt-key: "my_super_secret_jwt_key_for_acha_project"

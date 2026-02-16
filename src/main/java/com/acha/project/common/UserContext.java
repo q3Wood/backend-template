@@ -1,6 +1,6 @@
 package com.acha.project.common;
 
-import com.acha.project.model.entity.User;
+import com.acha.project.model.dto.user.LoginUserDTO;
 
 /**
  * 用户上下文工具类 (基于 ThreadLocal)
@@ -9,19 +9,19 @@ import com.acha.project.model.entity.User;
 public class UserContext {
 
     // 这是一个线程本地变量，每个线程都有自己独立的一份，互不干扰
-    private static final ThreadLocal<User> USER_HOLDER = new ThreadLocal<>();
+    private static final ThreadLocal<LoginUserDTO> USER_HOLDER = new ThreadLocal<>();
 
     /**
      * 存入用户信息
      */
-    public static void set(User user) {
+    public static void set(LoginUserDTO user) {
         USER_HOLDER.set(user);
     }
 
     /**
      * 获取用户信息
      */
-    public static User get() {
+    public static LoginUserDTO get() {
         return USER_HOLDER.get();
     }
 

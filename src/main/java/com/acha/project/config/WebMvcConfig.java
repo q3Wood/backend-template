@@ -1,8 +1,8 @@
 package com.acha.project.config;
 
 import com.acha.project.interceptor.LoginInterceptor;
-import jakarta.annotation.Resource;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.lang.NonNull;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -13,11 +13,14 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
 
-    @Resource
-    private LoginInterceptor loginInterceptor;
+    private final LoginInterceptor loginInterceptor;
+
+    public WebMvcConfig(LoginInterceptor loginInterceptor) {
+        this.loginInterceptor = loginInterceptor;
+    }
 
     @Override
-    public void addInterceptors(InterceptorRegistry registry) {
+    public void addInterceptors(@NonNull InterceptorRegistry registry) {
         // 注册我们写的登录拦截器
         registry.addInterceptor(loginInterceptor)
                 // 1. 拦截所有请求
