@@ -50,3 +50,21 @@ acha:
     token-ttl-hours: 24
     salt: "acha_complex_salt_2026!@#"
     #jwt-key: "my_super_secret_jwt_key_for_acha_project"
+
+# 4. 日志配置 (Logback)
+logging:
+  level:
+    root: INFO # 全局日志级别
+    com.acha.project: DEBUG # 开启我们自己代码的 DEBUG 日志，方便调试
+    org.springframework: WARN # 减少 Spring 框架的啰嗦日志
+    org.mybatis: WARN # 减少 MyBatis 的日志（如果不调试 SQL）
+  file:
+    name: logs/backend.log # 日志文件输出路径 (自动生成在项目根目录 logs 文件夹下)
+  logback:
+    rollingpolicy:
+      max-file-size: 10MB # 单个日志文件最大大小
+      max-history: 30 # 保留最近 30 天的日志
+      file-name-pattern: ${LOG_FILE}.%d{yyyy-MM-dd}.%i.gz # 归档文件命名格式
+  charset:
+    console: UTF-8
+    file: UTF-8

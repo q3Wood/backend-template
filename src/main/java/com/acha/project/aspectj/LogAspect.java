@@ -1,6 +1,5 @@
 package com.acha.project.aspectj;
 
-import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.acha.project.common.UserContext;
 import com.acha.project.model.dto.user.LoginUserDTO;
@@ -15,6 +14,7 @@ import org.springframework.util.StopWatch;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -43,7 +43,7 @@ public class LogAspect {
 
         // 2. 获取请求相关信息
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        HttpServletRequest request = attributes.getRequest();
+        HttpServletRequest request = Objects.requireNonNull(attributes).getRequest();
         
         // 生成唯一的请求 ID，方便日志链路追踪
         String requestId = UUID.randomUUID().toString();

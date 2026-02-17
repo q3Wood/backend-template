@@ -1,6 +1,9 @@
 package com.acha.project.config;
 
 import com.acha.project.interceptor.LoginInterceptor;
+
+import java.util.Objects;
+
 import org.springframework.context.annotation.Configuration;
 import org.springframework.lang.NonNull;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -22,7 +25,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(@NonNull InterceptorRegistry registry) {
         // 注册我们写的登录拦截器
-        registry.addInterceptor(loginInterceptor)
+        registry.addInterceptor(Objects.requireNonNull(loginInterceptor))
                 // 1. 拦截所有请求
                 .addPathPatterns("/**")
                 // 2. 放行不需要登录的接口 (白名单)

@@ -1,6 +1,7 @@
 package com.acha.project.service;
 
 import com.acha.project.model.entity.User;
+import com.acha.project.model.dto.user.UserUpdateMyRequestDTO;
 import com.acha.project.model.vo.user.UserVO;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -52,4 +53,11 @@ public interface UserService extends IService<User> {
      */
     boolean updatePassword(String oldPassword, String newPassword, String checkPassword);
 
+    /**
+     * 更新个人信息
+     *
+     * @param request 包含要修改的字段的 DTO
+     * @return 是否成功
+     */
+    boolean updateUserInfo(UserUpdateMyRequestDTO request);
 }

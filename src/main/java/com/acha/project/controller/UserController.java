@@ -3,6 +3,7 @@ package com.acha.project.controller;
 import com.acha.project.common.BaseResponse;
 import com.acha.project.model.dto.user.UserLoginRequestDTO;
 import com.acha.project.model.dto.user.UserRegisterRequestDTO;
+import com.acha.project.model.dto.user.UserUpdateMyRequestDTO;
 import com.acha.project.model.dto.user.UserUpdatePasswordRequestDTO;
 import com.acha.project.model.vo.user.UserVO;
 import com.acha.project.service.UserService;
@@ -101,5 +102,16 @@ public class UserController {
         return BaseResponse.success(result, "修改密码成功");
     }
 
-
+    /**
+     * 更新个人信息
+     *
+     * @param request 请求参数
+     * @return 是否更新成功
+     */
+    @PostMapping("/update")
+    @Operation(summary = "更新个人信息")
+    public BaseResponse<Boolean> updateUserInfo(@RequestBody @Valid UserUpdateMyRequestDTO request) {
+        boolean result = userService.updateUserInfo(request);
+        return BaseResponse.success(result, "更新个人信息成功");
+    }
 }

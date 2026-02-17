@@ -2,8 +2,11 @@ package com.acha.project.interceptor;
 
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
+
 import com.acha.project.common.UserContext;
 import com.acha.project.config.SecurityProperties;
+import com.acha.project.constant.RedisConstant;
+import com.acha.project.constant.UserConstant;
 import com.acha.project.model.dto.user.LoginUserDTO;
 import com.acha.project.model.entity.User;
 
@@ -12,13 +15,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import java.util.concurrent.TimeUnit;
 
 /**
- * 登录拦截器 (JWT + Redis 版本)
+ * 登录拦截器 (UUID Token + Redis 版本)
  */
 @Component
 public class LoginInterceptor implements HandlerInterceptor {
@@ -32,18 +36,18 @@ public class LoginInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler) throws Exception {
         // 1. 从 Header 获取 Token
-        String token = request.getHeader("Authorization");
+        String token = request.getHeader(UserConstant.TOKEN_HEADER);
 
         // 2. 如果 Token 为空，直接拦截
-        if (StrUtil.isBlank(token) || !token.startsWith("Bearer ")) {
+        if (StrUtil.isBlank(token) || !token.startsWith(UserConstant.TOKEN_PREFIX)) {
             returnUnauthorized(response, "Token 格式错误或为空，请重新登录");
             return false;
         }
 
-        token = token.substring(7); // 去掉 "Bearer "
+        token = token.substring(UserConstant.TOKEN_PREFIX.length()); // 去掉前缀
         // 3. 去 Redis 查询 Token 是否存在
         // 这里的 key 必须和 Service 里存的时候保持一致 ("login:token:" + token)
-        String redisKey = "login:token:" + token;
+        String redisKey = RedisConstant.LOGIN_TOKEN_KEY + token;
         String userJson = stringRedisTemplate.opsForValue().get(redisKey);
 
         // 4. Redis 里没有数据 (说明 Token 过期了，或者根本就是假的)
@@ -74,7 +78,7 @@ public class LoginInterceptor implements HandlerInterceptor {
     }
 
     @Override
-    public void afterCompletion(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler, Exception ex) throws Exception {
+    public void afterCompletion(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler,@Nullable Exception ex) throws Exception {
         // 8. 请求结束，必须清空 ThreadLocal，防止内存泄漏
         UserContext.remove();
     }
